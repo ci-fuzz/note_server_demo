@@ -1,0 +1,4 @@
+{
+  "port_number": 5000,
+  "target_library": "./fuzzbuild/libFuzzCIsimple_note_server.so"
+}
