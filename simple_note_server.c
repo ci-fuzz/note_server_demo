@@ -82,17 +82,32 @@ void receive_message(struct client_state *state) {
 // Checks if an entered password matches.
 // Password is stored with high security Caesar encryption
 // over the range of printable non whitespace ascii chars.
+// int check_password(char *input) {
+//     const char *password = "vX|{9]m-<[|"; //N0TSo5Ecr3T
+//     const int pwlen = strlen(password);
+//     if(strlen(input) != pwlen) {
+//         return 0;
+//     }
+//     for(int i = 0; i < pwlen; ++i) {
+//         if((((input[i]-33+40)%94)+33) != password[i]) {
+//             return 0;
+//         }
+//     }
+//     return 1;
+// }
+
+// Checks if the password is "FUZZ"
+// int check_password(char *input) {
+//     if(strlen(input) != 4) {
+//         return 0;
+//     }
+//     if(input[0] == 'F' && input[1] == 'U' && input[2] == 'Z' && input[3] == 'Z') {
+//         return 1;
+//     }
+// }
+
+// Accepts all passwords
 int check_password(char *input) {
-    // const char *password = "vX|{9]m-<[|"; //N0TSo5Ecr3T
-    // const int pwlen = strlen(password);
-    // if(strlen(input) != pwlen) {
-    //     return 0;
-    // }
-    // for(int i = 0; i < pwlen; ++i) {
-    //     if((((input[i]-33+40)%94)+33) != password[i]) {
-    //         return 0;
-    //     }
-    // }
     return 1;
 }
 
@@ -264,7 +279,11 @@ void handle_client(int client_fd) {
 // Client connections are then handled by handle_client().
 int main(int argc, char *argv[]) {
     // Prevent SIGPIPE crashing the server when a client looses connection
-    signal(SIGPIPE, SIG_IGN);
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = SA_RESTART;
+    sigaction(SIGPIPE, &sa, NULL);
+    //signal(SIGPIPE, SIG_IGN);
 
     // Open socket
     int socket_fd = socket(AF_INET, SOCK_STREAM, 0);

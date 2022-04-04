@@ -18,14 +18,14 @@ static void TestOneNetworkInput(int client_fd, const uint8_t* data, size_t size)
     memcpy(request, data, size);
     request[size-1] = '\n';
     int written = write(client_fd, request, size);
+    // Wait 1ms
+    usleep(1000);
+    // Read the response
+    uint8_t response[1000];
+    read(client_fd, response, 1000);
 
-    WaitForReaction(client_fd, 10);
-
-    // // Wait 1ms
-    // usleep(1000);
-    // // Read the response
-    // uint8_t response[1000];
-    // read(client_fd, response, 1000);
+    // This should also work, but hangs the fuzz test for some reason
+    //WaitForReaction(client_fd, 10);
 }
 
 int (*original_main)(int, char **);
