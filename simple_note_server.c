@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <signal.h>
 
+static unsigned int connection = 0;
+
 
 // Saves the state of a connected client
 struct client_state {
@@ -77,6 +79,8 @@ void receive_message(struct client_state *state) {
     }
     // Got something, replace newline with terminating null-character and return
     *newline = '\0';
+
+    fprintf(stderr, "%06u Recv: %.*s\n", connection, strlen(state->recv_buffer), state->recv_buffer);
 }
 
 // Checks if an entered password matches.
@@ -263,6 +267,8 @@ void state_delete_note(struct client_state *state) {
 
 // Setup client state and loop over our simple state machine
 void handle_client(int client_fd) {
+    connection++;
+
     struct client_state cstate = {
         .state_fn = state_ask_name,
         .fd = client_fd,
@@ -332,13 +338,13 @@ int main(int argc, char *argv[]) {
 
         // Do something with it
 #ifndef LOG_SILENT
-        printf("Client connected!\n");
+        printf("%06u Client connected!\n", connection);
 #endif
         handle_client(client_fd);
         
         // Close connection
 #ifndef LOG_SILENT
-        printf("Client disconnected!\n");
+        printf("%06u Client disconnected!\n", connection);
 #endif
         if(close(client_fd) < 0) {
             perror("Failed to close client connection");

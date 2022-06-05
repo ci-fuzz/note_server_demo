@@ -1,5 +1,6 @@
 set -e
 mkdir -p fuzzbuild
 cd fuzzbuild
-cmake -DLOG_SILENT=ON ..
+#cmake -DLOG_SILENT=ON ..
+cmake ..
 make
